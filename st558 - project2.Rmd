@@ -1,0 +1,91 @@
+---
+title: "ST558 - Project 2"
+author: 'Group 9: Max Marion-Spencer & Xin Wang'
+date: '2022-07-03'
+output: html_document
+params: 
+      data_channel: bus
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,message=FALSE,warning=FALSE}
+library(tidyverse)
+```
+
+## Introduction 
+
+## Data
+
+```{r}
+# read in data
+news <- read_csv("OnlineNewsPopularity.csv") %>% 
+  as_tibble() %>% select(c(3,4,8,10,11,13,14:19,32:39,61))
+colnames(news)
+news
+```
+
+```{r}
+## pivot data channel from wide to long 
+news <- news %>%
+  pivot_longer(
+    cols = starts_with("data_channel"),
+    names_to = "data_channel",
+    values_to = "data_channel_type"
+  ) %>%
+  pivot_longer(
+    cols = starts_with("weekday_is"),
+    names_to = "weekday",
+    values_to = "weekday_type"
+  )
+
+##remove prefix and filter both type with 1
+news<- news %>% 
+  mutate(weekday = str_sub(weekday, 12, -1),
+          data_channel = str_sub(data_channel, 17, -1)) %>% 
+  filter(data_channel_type == 1 & weekday_type ==1)
+```
+
+```{r}
+## factor weekday and data channel
+news$weekday <- as.factor(news$weekday)
+levels(news$weekday)
+
+news$data_channel <- as.factor(news$data_channel)
+levels(news$data_channel)
+```
+
+```{r}
+# filter out one data channel 
+news <- news %>% filter(data_channel == params$data_channel)
+```
+
+## Summarizations
+
+## Modeling
+
+## Comparison
+
+## Automation
+
+this should work, can testafter finshed above 
+
+```{r,eval=FALSE}
+data_channel <- c("bus","entertainment","lifestyle","socmed","tech","world")
+output_file <- paste0(data_channel, "Analysis.md")
+params = lapply(data_channel, 
+                FUN = function(x){
+                  list(data_channel = x)})
+reports <- tibble(output_file, params)
+apply(reports, 
+      MARGIN = 1,
+      FUN = function(x){
+        rmarkdown::render(input = "st558 - project2.Rmd", 
+                          output_format = "github_document", 
+                          output_options = list(html_preview = FALSE), 
+                          output_file = x[[1]], 
+                          params = x[[2]])})
+```
+
