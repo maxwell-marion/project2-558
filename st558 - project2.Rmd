@@ -30,13 +30,15 @@ max, this is the variables I used, feel free to add more if needed
 7. num_hrefs: Number of links 
 9. num_imgs: Number of images 
 10. num_videos: Number of videos 
+12.num_keywords: Number of keywords in the metadata 
+
 13. data_channel_is_lifestyle: Is data channel 'Lifestyle'? 
 14. data_channel_is_entertainment: Is data channel 'Entertainment'? 
 15. data_channel_is_bus: Is data channel 'Business'? 
 16. data_channel_is_socmed: Is data channel 'Social Media'? 
 17. data_channel_is_tech: Is data channel 'Tech'? 
 18. data_channel_is_world: Is data channel 'World'? 
-12.num_keywords: Number of keywords in the metadata 
+
 31. weekday_is_monday: Was the article published on a Monday? 
 32. weekday_is_tuesday: Was the article published on a Tuesday? 
 33. weekday_is_wednesday: Was the article published on a Wednesday? 
