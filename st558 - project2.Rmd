@@ -13,9 +13,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r,message=FALSE,warning=FALSE}
 library(tidyverse)
+library(tibble)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(corrplot)
 ```
 
 ## Introduction 
+
+note: 
+max, this is the variables I used, feel free to add more if needed
+
+2. n_tokens_title: Number of words in the title 
+3. n_tokens_content: Number of words in the content 
+7. num_hrefs: Number of links 
+9. num_imgs: Number of images 
+10. num_videos: Number of videos 
+13. data_channel_is_lifestyle: Is data channel 'Lifestyle'? 
+14. data_channel_is_entertainment: Is data channel 'Entertainment'? 
+15. data_channel_is_bus: Is data channel 'Business'? 
+16. data_channel_is_socmed: Is data channel 'Social Media'? 
+17. data_channel_is_tech: Is data channel 'Tech'? 
+18. data_channel_is_world: Is data channel 'World'? 
+12.num_keywords: Number of keywords in the metadata 
+31. weekday_is_monday: Was the article published on a Monday? 
+32. weekday_is_tuesday: Was the article published on a Tuesday? 
+33. weekday_is_wednesday: Was the article published on a Wednesday? 
+34. weekday_is_thursday: Was the article published on a Thursday? 
+35. weekday_is_friday: Was the article published on a Friday? 
+36. weekday_is_saturday: Was the article published on a Saturday? 
+37. weekday_is_sunday: Was the article published on a Sunday? 
+38. is_weekend: Was the article published on the weekend? 
+
 
 ## Data
 
@@ -51,6 +81,7 @@ news<- news %>%
 ```{r}
 ## factor weekday and data channel
 news$weekday <- as.factor(news$weekday)
+news$weekday<- ordered(news$weekday, levels=c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"))
 levels(news$weekday)
 
 news$data_channel <- as.factor(news$data_channel)
@@ -60,9 +91,39 @@ levels(news$data_channel)
 ```{r}
 # filter out one data channel 
 news <- news %>% filter(data_channel == params$data_channel)
+news
 ```
 
 ## Summarizations
+
+
+
+
+### Contingency Tables
+
+This table shows the count of days in a week for article publish. It helps us to see which day of the week article published the most and whether there are more article published on the weekdays or weekends. 
+
+```{r}
+kable(t(table(news$weekday)), caption = "Article Published Day")
+```
+
+We transform shares into a binary variable using the decision threshold of 1,400. This contingency table shows the count of shares on the weekdays and weekends. 
+
+```{r}
+newsa <- news %>% 
+  mutate(SharesClass = if_else(shares >=1400, "More than 1,400","Less than 1,400"), 
+         is_weekend = if_else(is_weekend== 0, "Weekday", "Weekend"))
+
+kable(table(newsa$SharesClass,newsa$is_weekend), caption = "Count of Shares")
+```
+
+### Correlation Plot
+
+```{r}
+cor.variables <- news %>% select(n_tokens_title, n_tokens_content, num_hrefs, num_imgs, num_videos,num_keywords)
+correlation <- cor(cor.variables, method = "spearman")
+corrplot(correlation)
+```
 
 ## Modeling
 
@@ -70,7 +131,7 @@ news <- news %>% filter(data_channel == params$data_channel)
 
 ## Automation
 
-this should work, can testafter finshed above 
+this should work, can test after finished above 
 
 ```{r,eval=FALSE}
 data_channel <- c("bus","entertainment","lifestyle","socmed","tech","world")
