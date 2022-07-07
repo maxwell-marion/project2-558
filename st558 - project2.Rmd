@@ -14,6 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r,message=FALSE,warning=FALSE}
 library(tidyverse)
 library(tibble)
+library(caret)
+library(gbm)
 library(knitr)
 library(dplyr)
 library(ggplot2)
@@ -52,15 +54,14 @@ max, this is the variables I used, feel free to add more if needed
 ## Data
 
 ```{r}
-# read in data
-news <- read_csv("OnlineNewsPopularity.csv") %>% 
-  as_tibble() %>% select(c(3,4,8,10,11,13,14:19,32:39,61))
+# read in data and select varaibles
+news <- read_csv("OnlineNewsPopularity.csv", show_col_types = FALSE) %>% select(c(3,4,8,10,11,13,14:19,32:39,61))
 colnames(news)
 news
 ```
 
 ```{r}
-## pivot data channel from wide to long 
+# pivot data channel from wide to long 
 news <- news %>%
   pivot_longer(
     cols = starts_with("data_channel"),
@@ -73,7 +74,7 @@ news <- news %>%
     values_to = "weekday_type"
   )
 
-##remove prefix and filter both type with 1
+# remove prefix and filter both type with 1
 news<- news %>% 
   mutate(weekday = str_sub(weekday, 12, -1),
           data_channel = str_sub(data_channel, 17, -1)) %>% 
@@ -81,7 +82,7 @@ news<- news %>%
 ```
 
 ```{r}
-## factor weekday and data channel
+# factor weekday and data channel
 news$weekday <- as.factor(news$weekday)
 news$weekday<- ordered(news$weekday, levels=c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"))
 levels(news$weekday)
@@ -94,6 +95,16 @@ levels(news$data_channel)
 # filter out one data channel 
 news <- news %>% filter(data_channel == params$data_channel)
 news
+#summary(news)
+```
+
+```{r}
+# splitting data into training & test sets
+set.seed(11)
+train <- sample(1:nrow(news),size=nrow(news)*0.7)
+test <- setdiff(1:nrow(news),train)
+newsTrain <- news[train, ]
+newsTest <- news[test, ]
 ```
 
 ## Summarizations
@@ -106,30 +117,98 @@ news
 This table shows the count of days in a week for article publish. It helps us to see which day of the week article published the most and whether there are more article published on the weekdays or weekends. 
 
 ```{r}
-kable(t(table(news$weekday)), caption = "Article Published Day")
+kable(t(table(newsTrain$weekday)), caption = "Article Published Day")
 ```
 
 We transform shares into a binary variable using the decision threshold of 1,400. This contingency table shows the count of shares on the weekdays and weekends. 
 
 ```{r}
-newsa <- news %>% 
+newsTrain <- newsTrain %>% 
   mutate(SharesClass = if_else(shares >=1400, "More than 1,400","Less than 1,400"), 
          is_weekend = if_else(is_weekend== 0, "Weekday", "Weekend"))
 
-kable(table(newsa$SharesClass,newsa$is_weekend), caption = "Count of Shares")
+kable(table(newsTrain$SharesClass,newsTrain$is_weekend), caption = "Count of Shares")
+```
+
+### Bar Plot
+```{r}
+ggplot(newsTrain, aes(x = weekday)) + 
+  geom_bar(aes(fill = SharesClass), position = "dodge") + 
+  labs(x = "Week") + 
+  scale_fill_discrete(name = "Shares") + 
+  ggtitle("Shares by Week")
+```
+
+### density plot 
+
+```{r}
+# outlier ??
+ggplot(newsTrain, aes(x = shares)) + 
+  geom_density(alpha = 0.5, position = "stack", aes(fill = is_weekend)) +
+  labs(title = "Density Plot for Shares") +
+  scale_fill_discrete(name = "Week", labels = c("Weekday", "Weekend"))  
 ```
 
 ### Correlation Plot
 
 ```{r}
-cor.variables <- news %>% select(n_tokens_title, n_tokens_content, num_hrefs, num_imgs, num_videos,num_keywords)
+cor.variables <- newsTrain %>% 
+  select(n_tokens_title, n_tokens_content, num_hrefs, num_imgs, num_videos,num_keywords)
 correlation <- cor(cor.variables, method = "spearman")
 corrplot(correlation)
 ```
 
 ## Modeling
 
+### Linear Regression Model 1
+
+### Linear Regression Model 2 
+
+```{r}
+fit.lr2 <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords, 
+                 data = newsTrain,
+                 method = "lm",
+                 preProcess = c("center", "scale"),
+                 trControl = trainControl(method = "cv", number = 10))
+fit.lr2 
+
+# on test set
+pred2 <- postResample(predict(fit.lr2, newdata = newsTest), obs = newsTest$shares)
+pred2
+```
+
+### Random Forest Model
+
+### Boosted Tree Model
+
+
+```{r}
+# tuning??
+fit.boost <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords,
+                 data = newsTrain,
+                 method = "gbm",
+                 preProcess = c("center", "scale"),
+                 trControl = trainControl(method = "cv", number = 10),
+                 tuneGrid = expand.grid(n.trees = c(50, 100, 150),
+                                        interaction.depth = 1:3, 
+                                        shrinkage = 0.1, 
+                                        n.minobsinnode = 10),
+                 verbose = FALSE)
+fit.boost
+
+# on test set
+pred4 <- postResample(predict(fit.boost, newdata = newsTest), obs = newsTest$shares)
+pred4
+```
+
 ## Comparison
+
+```{r}
+compare <- data.frame(pred2, pred4)
+colnames(compare) <- c("linear regression","boosted tree")
+compare
+```
+
 
 ## Automation
 
