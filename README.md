@@ -15,10 +15,6 @@ The analysis for [Socmed](socmeAnalysis.md)\
 The analysis for [Tech](techAnalysis.md)\
 The analysis for [World](worldAnalysis.md)
 
-busAnalysis
-
-"bus","entertainment","lifestyle","socmed","tech","world"
-
 # Code Used to Create Analyses
 
 ```
