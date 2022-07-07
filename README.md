@@ -2,11 +2,10 @@
 
 heyy max, could you write this part please
 
-# List of R Packages Used
+# List of R Packages Used (check?)
 
 
-
-# links to the analyses
+# links to the analyses (check?)
 
 The analysis for [Bus](busAnalysis.md)\
 The analysis for [Entertainment](entertainmentAnalysis.md)\
@@ -15,7 +14,7 @@ The analysis for [Socmed](socmeAnalysis.md)\
 The analysis for [Tech](techAnalysis.md)\
 The analysis for [World](worldAnalysis.md)
 
-# Code Used to Create Analyses
+# Code Used to Create Analyses (check?)
 
 ```
 data_channel <- c("bus","entertainment","lifestyle","socmed","tech","world")
