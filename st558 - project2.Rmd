@@ -20,6 +20,7 @@ library(knitr)
 library(dplyr)
 library(ggplot2)
 library(corrplot)
+library(vtable)
 ```
 
 ## Introduction 
@@ -32,7 +33,7 @@ max, this is the variables I used, feel free to add more if needed
 7. num_hrefs: Number of links 
 9. num_imgs: Number of images 
 10. num_videos: Number of videos 
-12.num_keywords: Number of keywords in the metadata 
+12. num_keywords: Number of keywords in the metadata 
 
 13. data_channel_is_lifestyle: Is data channel 'Lifestyle'? 
 14. data_channel_is_entertainment: Is data channel 'Entertainment'? 
@@ -109,7 +110,14 @@ newsTest <- news[test, ]
 
 ## Summarizations
 
+```{r}
+# Building summary statistics for our data
+# NOTE: Using a standard output instead of kable, as the column names get
+# grouped too closely together otherwise
+news_summary <- sumtable(news[0:6], out = "return", add.median = TRUE)
+news_summary
 
+```
 
 
 ### Contingency Tables
@@ -160,6 +168,8 @@ corrplot(correlation)
 
 ## Modeling
 
+(ADDING A SHORT EXPLANATION OF THE IDEA BEHIND A LINEAR REGRESSION MODEL HERE)
+
 ### Linear Regression Model 1
 
 ### Linear Regression Model 2 
@@ -178,6 +188,8 @@ pred2
 ```
 
 ### Random Forest Model
+
+
 
 ### Boosted Tree Model
 
