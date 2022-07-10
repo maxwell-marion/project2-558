@@ -23,7 +23,7 @@ library(vtable)
 The analysis for [Bus](busAnalysis.md)\
 The analysis for [Entertainment](entertainmentAnalysis.md)\
 The analysis for [Lifestyle](lifestyleAnalysis.md)\
-The analysis for [Socmed](socmeAnalysis.md)\
+The analysis for [Socmed](socmedAnalysis.md)\
 The analysis for [Tech](techAnalysis.md)\
 The analysis for [World](worldAnalysis.md)
 
