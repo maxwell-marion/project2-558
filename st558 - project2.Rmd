@@ -166,6 +166,39 @@ correlation <- cor(cor.variables, method = "spearman")
 corrplot(correlation)
 ```
 
+### Scatter Plot: n_tokens_content vs. num_imgs
+
+```{r}
+# Creating a scatterplot of the number of words vs number of images
+# NOTE: Adding some jitter to better convey where the majority of points lay
+img_scatter <- ggplot(newsTrain, aes(x = n_tokens_content, y = num_imgs))
+img_scatter + geom_point(aes(color = is_weekend, shape = SharesClass), position = "jitter") + geom_smooth(method = lm) +
+  labs(title = "Image Count vs. Word Count", x = "Word Count", y = "Image Count", color = "Weekend or Weekday", shape = "Shares")
+```
+
+
+### Scatter Plot: n_tokens_content vs. num_videos
+
+```{r}
+# Creating a scatterplot of the number of words vs number of videos
+vid_scatter <- ggplot(newsTrain, aes(x = n_tokens_content, y = num_videos))
+vid_scatter + geom_point(aes(color = is_weekend, shape = SharesClass), position = "jitter") + geom_smooth(method = lm) +
+  labs(title = "Image Count vs. Video Count", x = "Word Count", y = "Video Count", color = "Weekend or Weekday", shape = "Shares") 
+```
+
+
+### Boxplot of the Number of Keywords vs. Share Category (Above 1,400 or Below 1,400)
+
+```{r}
+# Creating a boxplot of num keywords vs share category
+count_box <- ggplot(newsTrain, aes(x = SharesClass, y = num_keywords))
+count_box + geom_boxplot() + 
+  labs(title = "Keyword Count Boxplots By Share Category", 
+       x = "Share Count", y = "Keyword Count")
+
+```
+
+
 ## Modeling
 
 (ADDING A SHORT EXPLANATION OF THE IDEA BEHIND A LINEAR REGRESSION MODEL HERE)
