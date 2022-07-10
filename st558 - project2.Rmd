@@ -148,7 +148,6 @@ ggplot(newsTrain, aes(x = weekday)) +
 This density plot shows the distribution for number of shares on weekdays and on weekends. Higher peak indicates there is a higher concentration of points. If the curve is left skewed, then the mean is less than the median. If the curve is right skewed, then the mean is greater than the median. If the curve has no skew, then the mean is equal to the median.
 
 ```{r}
-# outlier ??
 ggplot(newsTrain, aes(x = shares)) + 
   geom_density(alpha = 0.5, position = "stack", aes(fill = is_weekend)) +
   labs(title = "Density Plot for Shares") +
@@ -289,7 +288,6 @@ The boosted tree model is a tree based method where the trees grow in a sequenti
 
 
 ```{r}
-# tuning??
 fit.boost <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords,
                  data = newsTrain,
                  method = "gbm",
@@ -337,8 +335,6 @@ compare_func(compare)
 
 ## Automation
 
-
-this should work, can test after finished above 
 
 ```{r,eval=FALSE}
 data_channel <- c("bus","entertainment","lifestyle","socmed","tech","world")
