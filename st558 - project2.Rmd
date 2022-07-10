@@ -100,6 +100,9 @@ newsTest <- news[test, ]
 
 ## Summarizations
 
+The table below shows count, mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum of all of our numeric variables: title word count, word count, number of links, number of images, number of videos, and number of keywords. These summary statistics can be useful for examining the center and spread of these variables.
+
+
 ```{r}
 # Building summary statistics for our data
 # NOTE: Using a standard output instead of kable, as the column names get
@@ -165,6 +168,8 @@ corrplot(correlation)
 
 ### Scatter Plot: n_tokens_content vs. num_imgs
 
+Our first scatterplot shows us the relationship between image count and word count, as well as shape and color aesthetics that show us high/low shares and weekend/weekday respectively. The number of news articles with low image count somewhat obscures the shape and color aesthetics for a portion of the graph, but you use these key items to view outliers, which can also provide additional interesting context to sharing success and when the post was made. 
+
 ```{r}
 # Creating a scatterplot of the number of words vs number of images
 # NOTE: Adding some jitter to better convey where the majority of points lay
@@ -176,6 +181,9 @@ img_scatter + geom_point(aes(color = is_weekend, shape = SharesClass), position 
 
 ### Scatter Plot: n_tokens_content vs. num_videos
 
+This scatter plot shows us the trend in word count and video count, with the addition of shape and color aesthetics that show us high/low shares and weekend/weekday respectively. Because of the density of news articles with relatively low video count, this is likely to primarily be useful for determining the sharing success and weekday/end variables of outliers. Either high video count or high word count outliers. 
+
+
 ```{r}
 # Creating a scatterplot of the number of words vs number of videos
 vid_scatter <- ggplot(newsTrain, aes(x = n_tokens_content, y = num_videos))
@@ -185,6 +193,9 @@ vid_scatter + geom_point(aes(color = is_weekend, shape = SharesClass), position 
 
 
 ### Boxplot of the Title Word Count vs. Share Category (Above 1,400 or Below 1,400)
+
+This boxplot allows us to examine how the distribution of our two sharing categories (>1,400 and <1,400) as they relate to the number of words in the title of news articles. With this, we can see if there might be a distinction between title length and what types of posts are shared more frequently.
+
 
 ```{r}
 # Creating a boxplot of num title words vs share category
@@ -248,6 +259,10 @@ pred2
 
 Our random forest model is built on the concept of using multiple trees from bootstrap samples, and then averaging the results in order to reduce the susceptibility to variance that single trees have.
 
+Our lone tuning parameter is:
+
+*mtry: The number of variables that are randomly sampled when we determine splits for our tree.
+
 ```{r}
 fit.random <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords,
                     method = "rf",
@@ -294,6 +309,11 @@ pred4
 
 ## Comparison
 
+The table below shows our four models and their respective RMSE, Rsquared and MAEs. 
+
+For the purposes of model selection, we will be choosing the model with the lowest RMSE as our final model. 
+
+
 ```{r}
 compare <- data.frame(pred1, pred2 , pred3, pred4)
 colnames(compare) <- c("basic linear regression","linear regression","random forest","boosted tree")
@@ -306,6 +326,9 @@ compare_func <- function(compare){
   return(cat("We have selected our",temp,"model- as this is the model with the lowest RMSE."))
 }
 ```
+
+
+*For our final model selection:*
 
 ```{r}
 compare_func(compare)
