@@ -4,8 +4,19 @@ heyy max, could you write this part please
 
 # List of R Packages Used (check?)
 
+```
+library(tidyverse)
+library(tibble)
+library(caret)
+library(gbm)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(corrplot)
+library(vtable)
+```
 
-# links to the analyses (check?)
+# Links to the analyses (check?)
 
 The analysis for [Bus](busAnalysis.md)\
 The analysis for [Entertainment](entertainmentAnalysis.md)\
