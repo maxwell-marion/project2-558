@@ -1,6 +1,8 @@
 # Purpose of the Repo
 
-heyy max, could you write this part please
+This repo is dedicated to ST-558 Project 2, for Group 9 - [Maxwell Marion-Spencer](mailto:msmarion@ncsu.edu) and [Xin Wang](mailto:xwang239@ncsu.edu).
+
+The focus of this project is on automating reports using Markdown, and building predictive models. The data used for this project is an online news popularity data set, from which we will build predictive models with the intention of predicting the number of shares. Each data channel will have it's own output, as the creation of Markdown files has been automated.
 
 # List of R Packages Used (check?)
 
