@@ -25,32 +25,22 @@ library(vtable)
 
 ## Introduction 
 
-note: 
-max, this is the variables I used, feel free to add more if needed
+For this project, we will be using four models (two Linear Regression, one Random Forest and one Boosted Tree) to make predictions on the number of shares using the Online News Popularity dataset. This dataset contains six different data channels, variables we choose for analysis are: 
 
-2. n_tokens_title: Number of words in the title 
-3. n_tokens_content: Number of words in the content 
-7. num_hrefs: Number of links 
-9. num_imgs: Number of images 
-10. num_videos: Number of videos 
-12. num_keywords: Number of keywords in the metadata 
+* Number of words in the title  
+* Number of words in the content  
+* Number of links  
+* Number of images  
+* Number of videos  
+* Number of keywords in the metadata  
+* Article published Day in a week  
+* Article published on the weekend or not 
 
-13. data_channel_is_lifestyle: Is data channel 'Lifestyle'? 
-14. data_channel_is_entertainment: Is data channel 'Entertainment'? 
-15. data_channel_is_bus: Is data channel 'Business'? 
-16. data_channel_is_socmed: Is data channel 'Social Media'? 
-17. data_channel_is_tech: Is data channel 'Tech'? 
-18. data_channel_is_world: Is data channel 'World'? 
+The response variable for the dataset is:
 
-31. weekday_is_monday: Was the article published on a Monday? 
-32. weekday_is_tuesday: Was the article published on a Tuesday? 
-33. weekday_is_wednesday: Was the article published on a Wednesday? 
-34. weekday_is_thursday: Was the article published on a Thursday? 
-35. weekday_is_friday: Was the article published on a Friday? 
-36. weekday_is_saturday: Was the article published on a Saturday? 
-37. weekday_is_sunday: Was the article published on a Sunday? 
-38. is_weekend: Was the article published on the weekend? 
+* Number of Shares
 
+We will randomly split the data into a training (70%) and a test (30%) set and fit four models on the training set. We will then fit four models on the test set and decide which model produces the best prediction, which is the one with the smallest root mean squared error.
 
 ## Data
 
@@ -139,6 +129,9 @@ kable(table(newsTrain$SharesClass,newsTrain$is_weekend), caption = "Count of Sha
 ```
 
 ### Bar Plot
+
+In this bar plot, we can see the count and the comparison of shares less than 1,400 and shares more than 1,400 in a week, where longer bars indicate higher values.
+
 ```{r}
 ggplot(newsTrain, aes(x = weekday)) + 
   geom_bar(aes(fill = SharesClass), position = "dodge") + 
@@ -149,6 +142,8 @@ ggplot(newsTrain, aes(x = weekday)) +
 
 ### density plot 
 
+This density plot shows the distribution for number of shares on weekdays and on weekends. Higher peak indicates there is a higher concentration of points. If the curve is left skewed, then the mean is less than the median. If the curve is right skewed, then the mean is greater than the median. If the curve has no skew, then the mean is equal to the median.
+
 ```{r}
 # outlier ??
 ggplot(newsTrain, aes(x = shares)) + 
@@ -158,6 +153,8 @@ ggplot(newsTrain, aes(x = shares)) +
 ```
 
 ### Correlation Plot
+
+The correlation plot shows the correlation between all numeric predictor variables. If the color is close to dark blue means there is a positive correlation between two variables, if the color is close to dark red means there is a negative correlation between two variables.
 
 ```{r}
 cor.variables <- newsTrain %>% 
@@ -225,6 +222,13 @@ pred2
 
 
 ### Boosted Tree Model
+
+The boosted tree model is a tree based method where the trees grow in a sequential manner, each subsequent tree is based on the previous tree so it updates the prediction as the tree grows.Boosted tree model slowly trains the trees to ensure there is no overfitting for the training data. There are four tuning parameters: 
+
+* n.trees: Number of trees, increasing n reduces the error on training set  
+* interaction.depth: number of splits it has to perform on a tree
+* shrinkage: learning rate, reduce the impact of each additional fitted tree 
+* n.minobsinnode: minimum number of observations in trees' terminal nodes
 
 
 ```{r}
