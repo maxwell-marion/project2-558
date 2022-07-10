@@ -198,11 +198,38 @@ title_box + geom_boxplot() +
 
 ## Modeling
 
-(ADDING A SHORT EXPLANATION OF THE IDEA BEHIND A LINEAR REGRESSION MODEL HERE)
+Our first two models are linear regression models.
 
-### Linear Regression Model 1
+Linear regression modelling allows you to examine the relationship between a response variable and one or more predictor variables typically by minimizing the distance between the distance between your data points and a line (least squares regression.) 
 
-### Linear Regression Model 2 
+We will be examining two relatively basic linear models, one with only our very basic predictor variables, and the other with all of our numeric predictor variables. 
+
+
+### Linear Regression Model 1: Only basic numeric variables
+
+This linear regression model contains just the most basic information about the
+piece - the number of words in the title, the number of words in the piece, and
+the number of both images and videos.
+
+
+```{r}
+fit.lr1 <- train(shares ~ n_tokens_title + n_tokens_content + num_imgs + num_videos, 
+                 data = newsTrain,
+                 method = "lm",
+                 preProcess = c("center", "scale"),
+                 trControl = trainControl(method = "cv", number = 10))
+fit.lr1 
+
+# on test set
+pred1 <- round(postResample(predict(fit.lr1, newdata = newsTest), obs = newsTest$shares),3)
+pred1
+```
+
+
+### Linear Regression Model 2: All numeric variables
+
+This linear regression model contains all of our numeric variables, including links
+and keywords.
 
 ```{r}
 fit.lr2 <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords, 
@@ -213,17 +240,32 @@ fit.lr2 <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_im
 fit.lr2 
 
 # on test set
-pred2 <- postResample(predict(fit.lr2, newdata = newsTest), obs = newsTest$shares)
+pred2 <- round(postResample(predict(fit.lr2, newdata = newsTest), obs = newsTest$shares),3)
 pred2
 ```
 
 ### Random Forest Model
 
+Our random forest model is built on the concept of using multiple trees from bootstrap samples, and then averaging the results in order to reduce the susceptibility to variance that single trees have.
+
+```{r}
+fit.random <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_imgs + num_videos + num_keywords,
+                    method = "rf",
+                    preProcess = c("center","scale"),
+                    trControl = trainControl(method = "cv", number = 5),
+                    tuneGrid = data.frame(mtry = 1:15),
+                    data = newsTrain)
+fit.random
+
+# on test set
+pred3 <- round(postResample(predict(fit.random, newdata = newsTest), obs = newsTest$shares),3)
+pred3
+```
 
 
 ### Boosted Tree Model
 
-The boosted tree model is a tree based method where the trees grow in a sequential manner, each subsequent tree is based on the previous tree so it updates the prediction as the tree grows.Boosted tree model slowly trains the trees to ensure there is no overfitting for the training data. There are four tuning parameters: 
+The boosted tree model is a tree based method where the trees grow in a sequential manner, each subsequent tree is based on the previous tree so it updates the prediction as the tree grows. Boosted tree model slowly trains the trees to ensure there is no overfitting for the training data. There are four tuning parameters: 
 
 * n.trees: Number of trees, increasing n reduces the error on training set  
 * interaction.depth: number of splits it has to perform on a tree
@@ -246,16 +288,27 @@ fit.boost <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num_
 fit.boost
 
 # on test set
-pred4 <- postResample(predict(fit.boost, newdata = newsTest), obs = newsTest$shares)
+pred4 <- round(postResample(predict(fit.boost, newdata = newsTest), obs = newsTest$shares),3)
 pred4
 ```
 
 ## Comparison
 
 ```{r}
-compare <- data.frame(pred2, pred4)
-colnames(compare) <- c("linear regression","boosted tree")
+compare <- data.frame(pred1, pred2 , pred4)
+colnames(compare) <- c("basic linear regression","linear regression","boosted tree")
 compare
+```
+```{r}
+# Building a quick compare function
+compare_func <- function(compare){
+  temp <- names(which.min(compare[1,]))
+  return(cat("We have selected our",temp,"model- as this is the model with the lowest RMSE."))
+}
+```
+
+```{r}
+compare_func(compare)
 ```
 
 
