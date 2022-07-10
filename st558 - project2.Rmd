@@ -253,7 +253,7 @@ fit.random <- train(shares ~ n_tokens_title + n_tokens_content + num_hrefs + num
                     method = "rf",
                     preProcess = c("center","scale"),
                     trControl = trainControl(method = "cv", number = 5),
-                    tuneGrid = data.frame(mtry = 1:15),
+                    tuneGrid = data.frame(mtry = 1:5),
                     data = newsTrain)
 fit.random
 
@@ -295,8 +295,8 @@ pred4
 ## Comparison
 
 ```{r}
-compare <- data.frame(pred1, pred2 , pred4)
-colnames(compare) <- c("basic linear regression","linear regression","boosted tree")
+compare <- data.frame(pred1, pred2 , pred3, pred4)
+colnames(compare) <- c("basic linear regression","linear regression","random forest","boosted tree")
 compare
 ```
 ```{r}
