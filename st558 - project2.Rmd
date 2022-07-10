@@ -187,14 +187,14 @@ vid_scatter + geom_point(aes(color = is_weekend, shape = SharesClass), position 
 ```
 
 
-### Boxplot of the Number of Keywords vs. Share Category (Above 1,400 or Below 1,400)
+### Boxplot of the Title Word Count vs. Share Category (Above 1,400 or Below 1,400)
 
 ```{r}
-# Creating a boxplot of num keywords vs share category
-count_box <- ggplot(newsTrain, aes(x = SharesClass, y = num_keywords))
-count_box + geom_boxplot() + 
-  labs(title = "Keyword Count Boxplots By Share Category", 
-       x = "Share Count", y = "Keyword Count")
+# Creating a boxplot of num title words vs share category
+title_box <- ggplot(newsTrain, aes(x = SharesClass, y = n_tokens_title))
+title_box + geom_boxplot() + 
+  labs(title = "Title Word Count Boxplots By Share Category", 
+       x = "Share Count", y = "Title Word Count")
 
 ```
 
