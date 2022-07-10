@@ -4,7 +4,7 @@ This repo is dedicated to ST-558 Project 2, for Group 9 - [Maxwell Marion-Spence
 
 The focus of this project is on automating reports using Markdown, and building predictive models. The data used for this project is an online news popularity data set, from which we will build predictive models with the intention of predicting the number of shares. Each data channel will have it's own output, as the creation of Markdown files has been automated.
 
-# List of R Packages Used (check?)
+# List of R Packages Used
 
 ```
 library(tidyverse)
@@ -18,7 +18,7 @@ library(corrplot)
 library(vtable)
 ```
 
-# Links to the analyses (check?)
+# Links to the analyses
 
 The analysis for [Bus](busAnalysis.md)\
 The analysis for [Entertainment](entertainmentAnalysis.md)\
@@ -27,7 +27,7 @@ The analysis for [Socmed](socmedAnalysis.md)\
 The analysis for [Tech](techAnalysis.md)\
 The analysis for [World](worldAnalysis.md)
 
-# Code Used to Create Analyses (check?)
+# Code Used to Create Analyses
 
 ```
 data_channel <- c("bus","entertainment","lifestyle","socmed","tech","world")
